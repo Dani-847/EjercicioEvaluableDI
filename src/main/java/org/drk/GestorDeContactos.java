@@ -8,19 +8,37 @@ public class GestorDeContactos extends JFrame{
     private JTable table1;
     private JTextField tfCorreo;
     private JTextField tfPais;
-    private JTextField tfPlataforma;
     private JButton btnAgregar;
     private JButton btnSalir;
+    private JLabel lblLogger;
+    private JComboBox cbPlataforma;
 
     private ArrayList<Contacto> contactos = new ArrayList<>();
 
     public GestorDeContactos(){
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Gestor De Contactos");
-        setSize(400,300);
+        setSize(400,500);
         setLocationRelativeTo(null);
         setVisible(true);
         setContentPane(panel1);
+
+        actualizarTabla();
+
+        table1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        table1.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && table1.getSelectedRow() >= 0) {
+                int row = table1.getSelectedRow();
+                if (row >= 0 && row < contactos.size()) {
+                    Contacto c = contactos.get(row);
+                    String mensaje = "Correo: " + c.getCorreo() + "\n" +
+                            "País: " + c.getPais() + "\n" +
+                            "Plataforma: " + c.getPlataforma();
+                    JOptionPane.showMessageDialog(this, mensaje, "Detalle del contacto", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
 
         btnAgregar.addActionListener(e -> agregarContacto());
 
@@ -30,14 +48,26 @@ public class GestorDeContactos extends JFrame{
     private void agregarContacto() {
         String correo = tfCorreo.getText();
         String pais = tfPais.getText();
-        String plataforma = tfPlataforma.getText();
+        String plataforma = cbPlataforma.getSelectedItem().toString();
 
         Contacto nuevoContacto = new Contacto();
         nuevoContacto.setCorreo(correo);
         nuevoContacto.setPais(pais);
         nuevoContacto.setPlataforma(plataforma);
 
-        contactos.add(nuevoContacto);
+        if (correo.isEmpty() || pais.isEmpty() || plataforma.isEmpty()) {
+            lblLogger.setText("Por favor ingrese el Correo");
+            limpiarCampos();
+        } else if (!correo.contains("@")) {
+            lblLogger.setText("El correo no es válido");
+            limpiarCampos();
+        } else if (contactos.stream().anyMatch(c -> c.getCorreo().equalsIgnoreCase(correo))) {
+            lblLogger.setText("El correo ya existe");
+            limpiarCampos();
+        } else {
+            contactos.add(nuevoContacto);
+            lblLogger.setText("Contacto agregado correctamente");
+        }
         actualizarTabla();
         limpiarCampos();
     }
@@ -58,7 +88,6 @@ public class GestorDeContactos extends JFrame{
     private void limpiarCampos() {
         tfCorreo.setText("");
         tfPais.setText("");
-        tfPlataforma.setText("");
     }
 
 }
