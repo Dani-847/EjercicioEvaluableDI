@@ -15,6 +15,10 @@ public class GestorDeContactos extends JFrame{
 
     private ArrayList<Contacto> contactos = new ArrayList<>();
 
+    /**
+     * Constructor de la clase GestorDeContactos.
+     * Configura la ventana principal y los eventos asociados a los componentes.
+     */
     public GestorDeContactos(){
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Gestor De Contactos");
@@ -27,6 +31,7 @@ public class GestorDeContactos extends JFrame{
 
         table1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
+        /** Muestra los detalles del contacto seleccionado en un cuadro de diálogo */
         table1.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() && table1.getSelectedRow() >= 0) {
                 int row = table1.getSelectedRow();
@@ -45,6 +50,10 @@ public class GestorDeContactos extends JFrame{
         btnSalir.addActionListener(e -> System.exit(0));
     }
 
+    /**
+     * Agrega un nuevo contacto a la lista después de validar los datos ingresados.
+     * Muestra mensajes de error o confirmación en el label correspondiente.
+     */
     private void agregarContacto() {
         String correo = tfCorreo.getText();
         String pais = tfPais.getText();
@@ -55,6 +64,7 @@ public class GestorDeContactos extends JFrame{
         nuevoContacto.setPais(pais);
         nuevoContacto.setPlataforma(plataforma);
 
+        /** Validaciones de los datos ingresados */
         if (correo.isEmpty() || pais.isEmpty() || plataforma.isEmpty()) {
             lblLogger.setText("Por favor ingrese el Correo");
             limpiarCampos();
@@ -72,6 +82,9 @@ public class GestorDeContactos extends JFrame{
         limpiarCampos();
     }
 
+    /**
+     * Actualiza la tabla de contactos con los datos actuales de la lista.
+     */
     private void actualizarTabla() {
         var modelo = new javax.swing.table.DefaultTableModel();
         modelo.addColumn("Correo");
@@ -85,6 +98,9 @@ public class GestorDeContactos extends JFrame{
         table1.setModel(modelo);
     }
 
+    /**
+     * Limpia los campos de entrada de texto.
+     */
     private void limpiarCampos() {
         tfCorreo.setText("");
         tfPais.setText("");
